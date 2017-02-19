@@ -10,18 +10,19 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class DatePicker extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
+        Date d = MainActivity.date1;
         // определяем текущую дату
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
+      //  final Calendar c = Calendar.getInstance();
+        int year = d.getYear();
+        int month = d.getMonth();
+        int day = d.getDay();
 
         // создаем DatePickerDialog и возвращаем его
         Dialog picker = new DatePickerDialog(getActivity(), this,

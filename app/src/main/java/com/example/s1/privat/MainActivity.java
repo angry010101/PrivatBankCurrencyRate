@@ -1,10 +1,14 @@
 package com.example.s1.privat;
 
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -26,10 +30,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "debug";
     private static PrivatApi privatApi;
     private Retrofit retrofit;
-    TextView alerttext;
-    RecyclerView recyclerView;
-    ArrayList<CurrencyModel> posts;
-
+    private static TextView alerttext;
+    private static RecyclerView recyclerView;
+    private static ArrayList<CurrencyModel> posts;
+    public static String d = "12.02.2017";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +56,35 @@ public class MainActivity extends AppCompatActivity {
 
         /*Date d = new Date();
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");*/
-        String d = "12.02.2017";//dateFormat.format().toString();
+        getReady();
+    }
+
+    public static void getReady(){//dateFormat.format().toString();
+        posts.clear();
+        recyclerView.getAdapter().notifyDataSetChanged();
         getandupdatedata(d);
     }
 
-    private void getandupdatedata(String date){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.datebtnmenu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_cart:
+                DialogFragment dateDialog = new DatePicker();
+                dateDialog.show(getSupportFragmentManager(), "datePicker");
+                break;
+        }
+        return true;
+    }
+
+
+    private static void getandupdatedata(String date){
         getApi().getData("", date).enqueue(new Callback<PostModel>() {
             @Override
             public void onResponse(Call<PostModel> call, Response<PostModel> response) {
@@ -67,7 +95,9 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (response.body().getExchangeRate().isEmpty()) {
-                    alerttext.setText("Cannot show the data. Json is empty");
+                    alerttext.setText("Cannot show the data.\nJson is empty");
+                    posts.clear();
+                    recyclerView.getAdapter().notifyDataSetChanged();
                 };
                 posts.addAll(response.body().getExchangeRate());
              /*   Iterator<CurrencyModel> iter = posts.iterator();
